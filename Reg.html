@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Đăng ký tài khoản</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    input[type="email"],
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .generate-btn {
+      margin-top: 10px;
+      width: 100%;
+      background: #eee;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .g-recaptcha {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      background: #28a745;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button[type="submit"]:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Đăng ký</h2>
+    <form action="/dang-ky" method="POST">
+      <label>Địa chỉ Email *</label>
+      <input type="email" name="email" placeholder="Nhập email" required>
+
+      <label>Tài khoản đăng nhập *</label>
+      <input type="text" name="username" placeholder="Nhập tài khoản" required>
+
+      <label>Mật khẩu *</label>
+      <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
+
+      <label>Xác thực mật khẩu *</label>
+      <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+
+      <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tự động tạo mật khẩu</button>
+
+      <div class="g-recaptcha" data-sitekey="6LdQaJUrAAAAAMuQqzQPAFZdRR6V3_5xSIZdPCeO"></div>
+
+      <button type="submit">Đăng ký</button>
+    </form>
+  </div>
+
+  <script>
+    function generatePassword() {
+      const length = 8;
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let password = "";
+      for (let i = 0, n = charset.length; i < length; ++i) {
+        password += charset.charAt(Math.floor(Math.random() * n));
+      }
+      document.getElementById('pass1').value = password;
+      document.getElementById('pass2').value = password;
+    }
+  </script>
+
+</body>
+</html>
