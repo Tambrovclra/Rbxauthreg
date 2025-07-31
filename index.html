@@ -59,10 +59,16 @@
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
+      background: none;
+      border: none;
       cursor: pointer;
-      font-size: 18px;
-      color: #888;
-      user-select: none;
+      padding: 0;
+    }
+
+    .toggle-password svg {
+      width: 22px;
+      height: 22px;
+      fill: black;
     }
 
     .generate-btn {
@@ -113,13 +119,23 @@
       <label>Mật khẩu *</label>
       <div class="input-group">
         <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
-        <span class="toggle-password" onclick="togglePassword('pass1')">👁</span>
+        <button type="button" class="toggle-password" onclick="togglePassword('pass1', this)">
+          <svg id="eye-pass1" viewBox="0 0 24 24">
+            <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+          </svg>
+        </button>
       </div>
 
       <label>Xác thực mật khẩu *</label>
       <div class="input-group">
         <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
-        <span class="toggle-password" onclick="togglePassword('pass2')">👁</span>
+        <button type="button" class="toggle-password" onclick="togglePassword('pass2', this)">
+          <svg id="eye-pass2" viewBox="0 0 24 24">
+            <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+          </svg>
+        </button>
       </div>
 
       <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tự động tạo mật khẩu</button>
@@ -142,12 +158,22 @@
       document.getElementById('pass2').value = password;
     }
 
-    function togglePassword(id) {
+    function togglePassword(id, button) {
       const input = document.getElementById(id);
+      const svg = button.querySelector('svg');
       if (input.type === "password") {
         input.type = "text";
+        svg.innerHTML = `
+          <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5
+            s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5z"/>
+          <path d="M1 1l22 22" stroke="black" stroke-width="2"/>
+        `;
       } else {
         input.type = "password";
+        svg.innerHTML = `
+          <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+          <circle cx="12" cy="12" r="2.5"/>
+        `;
       }
     }
   </script>
