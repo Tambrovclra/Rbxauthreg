@@ -39,15 +39,30 @@
       font-weight: 500;
     }
 
+    .input-group {
+      position: relative;
+    }
+
     input[type="email"],
     input[type="text"],
     input[type="password"] {
       width: 100%;
-      padding: 10px 12px;
+      padding: 10px 38px 10px 12px;
       border: 1px solid #ccc;
       border-radius: 8px;
       margin-top: 6px;
       font-size: 15px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      color: #888;
+      user-select: none;
     }
 
     .generate-btn {
@@ -96,10 +111,16 @@
       <input type="text" name="username" placeholder="Nhập tài khoản" required>
 
       <label>Mật khẩu *</label>
-      <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
+      <div class="input-group">
+        <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
+        <span class="toggle-password" onclick="togglePassword('pass1')">👁</span>
+      </div>
 
       <label>Xác thực mật khẩu *</label>
-      <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+      <div class="input-group">
+        <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+        <span class="toggle-password" onclick="togglePassword('pass2')">👁</span>
+      </div>
 
       <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tự động tạo mật khẩu</button>
 
@@ -111,14 +132,23 @@
 
   <script>
     function generatePassword() {
-      const length = 8;
-      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const length = 15;
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]:;<>,.?~";
       let password = "";
       for (let i = 0, n = charset.length; i < length; ++i) {
         password += charset.charAt(Math.floor(Math.random() * n));
       }
       document.getElementById('pass1').value = password;
       document.getElementById('pass2').value = password;
+    }
+
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      if (input.type === "password") {
+        input.type = "text";
+      } else {
+        input.type = "password";
+      }
     }
   </script>
 
