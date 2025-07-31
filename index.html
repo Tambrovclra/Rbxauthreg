@@ -4,103 +4,193 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Đăng ký tài khoản</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      background: #f4f6f8;
+      font-family: 'Roboto', sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
     }
 
-    .register-box {
-      background: white;
-      padding: 30px;
+    .container {
+      background: #fff;
+      padding: 30px 25px;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
     }
 
-    .register-box h2 {
-      margin-bottom: 20px;
+    h2 {
       text-align: center;
+      margin-bottom: 24px;
+      color: #333;
     }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 500;
     }
 
-    .toggle-pass {
-      cursor: pointer;
-      position: absolute;
-      right: 20px;
-      top: 40px;
-      font-size: 16px;
-    }
-
-    .password-field {
+    .input-group {
       position: relative;
     }
 
-    button {
+    input[type="email"],
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
-      padding: 12px;
-      background: #007bff;
-      color: white;
-      border: none;
+      padding: 10px 38px 10px 12px;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
+      margin-top: 6px;
+      font-size: 15px;
     }
 
-    button:hover {
-      background: #0056b3;
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .toggle-password svg {
+      width: 22px;
+      height: 22px;
+      fill: black;
+    }
+
+    .generate-btn {
+      margin-top: 10px;
+      width: 100%;
+      background: #eee;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .g-recaptcha {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      background: #28a745;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button[type="submit"]:hover {
+      background: #218838;
     }
   </style>
 </head>
 <body>
 
-  <div class="register-box">
-    <h2>Đăng ký tài khoản</h2>
-    <form id="registerForm">
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="text" id="username" placeholder="Tài khoản" required />
-      
-      <div class="password-field">
-        <input type="password" id="password" placeholder="Mật khẩu" required />
-        <span class="toggle-pass" onclick="togglePassword()">👁️</span>
+  <div class="container">
+    <h2>Đăng ký</h2>
+    <form onsubmit="handleRegister(event)">
+      <label>Địa chỉ Email *</label>
+      <input type="email" name="email" placeholder="Nhập email" required>
+
+      <label>Tài khoản đăng nhập *</label>
+      <input type="text" name="username" placeholder="Nhập tài khoản" required>
+
+      <label>Mật khẩu *</label>
+      <div class="input-group">
+        <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
+        <button type="button" class="toggle-password" onclick="togglePassword('pass1', this)">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+          </svg>
+        </button>
       </div>
-      
+
+      <label>Xác thực mật khẩu *</label>
+      <div class="input-group">
+        <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+        <button type="button" class="toggle-password" onclick="togglePassword('pass2', this)">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+          </svg>
+        </button>
+      </div>
+
+      <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tự động tạo mật khẩu</button>
+
+      <div class="g-recaptcha" data-sitekey="6Lfea5UrAAAAAIkljlGhTRzgUjKJy9axYPl2u04-"></div>
+
       <button type="submit">Đăng ký</button>
     </form>
   </div>
 
   <script>
-    function togglePassword() {
-      const pass = document.getElementById("password");
-      if (pass.type === "password") {
-        pass.type = "text";
+    function generatePassword() {
+      const length = 15;
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]:;<>,.?~";
+      let password = "";
+      for (let i = 0, n = charset.length; i < length; ++i) {
+        password += charset.charAt(Math.floor(Math.random() * n));
+      }
+      document.getElementById('pass1').value = password;
+      document.getElementById('pass2').value = password;
+    }
+
+    function togglePassword(id, button) {
+      const input = document.getElementById(id);
+      const svg = button.querySelector('svg');
+      if (input.type === "password") {
+        input.type = "text";
+        svg.innerHTML = `
+          <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5
+            s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5z"/>
+          <path d="M1 1l22 22" stroke="black" stroke-width="2"/>
+        `;
       } else {
-        pass.type = "password";
+        input.type = "password";
+        svg.innerHTML = `
+          <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
+          <circle cx="12" cy="12" r="2.5"/>
+        `;
       }
     }
 
-    document.getElementById("registerForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    function handleRegister(event) {
+      event.preventDefault();
 
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
+      const username = document.querySelector('input[name="username"]').value.trim();
+      const password = document.querySelector('input[name="password"]').value;
+      const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+      const email = document.querySelector('input[name="email"]').value.trim();
 
-      // Lưu thông tin vào localStorage
+      if (password !== confirmPassword) {
+        alert("Mật khẩu xác nhận không trùng khớp.");
+        return;
+      }
+
+      // Ghi dữ liệu vào localStorage
       localStorage.setItem("username", username);
       localStorage.setItem("balance", "0");
       localStorage.setItem("deposited", "0");
@@ -108,10 +198,8 @@
       localStorage.setItem("robux", "0");
 
       // Chuyển sang trang chính
-      setTimeout(() => {
-        window.location.href = "https://robuxvex.vercel.app";
-      }, 1000);
-    });
+      window.location.href = "https://robuxvex.vercel.app"; // Bạn có thể đổi thành tên file bạn muốn
+    }
   </script>
 
 </body>
