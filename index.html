@@ -101,7 +101,7 @@
 
 <div class="container">
   <h2>Đăng ký</h2>
-  <form id="registerForm">
+  <form id="registerForm" action="javascript:void(0);">
     <label>Địa chỉ Email *</label>
     <input type="email" name="email" placeholder="Nhập email" required>
 
@@ -128,8 +128,8 @@
   </form>
 </div>
 
+<!-- Firebase config -->
 <script>
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyBbTe4CZM8mUqsJUyFBIjcSc3w4rvIbmzc",
     authDomain: "robuxvex.firebaseapp.com",
@@ -169,38 +169,30 @@
     const username = document.querySelector('input[name="username"]').value.trim();
     const password = document.querySelector('input[name="password"]').value.trim();
     const confirmPassword = document.querySelector('input[name="confirm_password"]').value.trim();
+    const submitBtn = document.getElementById("submitBtn");
 
     if (password !== confirmPassword) {
       alert("Mật khẩu xác thực không khớp!");
       return;
     }
 
-    const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
     submitBtn.innerHTML = `Đang xử lý <span class="spinner"></span>`;
 
     try {
-  const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-  const uid = userCredential.user.uid;
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const uid = userCredential.user.uid;
 
-  await db.collection("users").doc(uid).set({
-    email: email,
-    username: username,
-    balance: 0
-  });
-
-  localStorage.setItem("username", username);
-  alert("Đăng ký thành công!");
-
-  window.location.href = "https://robuxvex.vercel.app";
-
-}
-    catch (error) {
-  submitBtn.disabled = false;
-  submitBtn.innerHTML = "Đăng ký";
-  alert("Lỗi đăng ký: " + error.message);
-}
+      await db.collection("users").doc(uid).set({
+        email: email,
+        username: username,
+        balance: 0
       });
+
+      localStorage.setItem("username", username);
+      alert("Đăng ký thành công!");
+
+      window.location.href = "https://robuxvex.vercel.app";
 
     } catch (error) {
       submitBtn.disabled = false;
