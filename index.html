@@ -77,13 +77,27 @@
               </div>
             </div>
           </div>
-          <div class="text-center mt-4 text-muted">
-            
-          </div>
+          <div class="text-center mt-4 text-muted"></div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBbTe4CZM8mUqsJUyFBIjcSc3w4rvIbmzc",
+      authDomain: "robuxvex.firebaseapp.com",
+      projectId: "robuxvex",
+      storageBucket: "robuxvex.firebasestorage.app",
+      messagingSenderId: "291500837886",
+      appId: "1:291500837886:web:08ae60ca6454c209328eaf",
+      measurementId: "G-LWRKTMPXEN"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 
   <script>
     function togglePassword(id, btn) {
@@ -112,7 +126,6 @@
       form.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        // Reset lỗi & thông báo
         nameError.textContent = "";
         emailError.textContent = "";
         passwordError.textContent = "";
@@ -120,7 +133,6 @@
         successMessage.style.display = "none";
         loadingMessage.style.display = "none";
 
-        // Lấy giá trị
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
         const password = passwordInput.value;
@@ -150,25 +162,29 @@
 
         if (!isValid) return;
 
-        // Hiện loading
         spinner.classList.remove("d-none");
         loadingMessage.style.display = "block";
 
-        setTimeout(() => {
-          const user = {
-            name: name,
-            balance: 0
-          };
-          localStorage.setItem("user", JSON.stringify(user));
+        // Đăng ký với Firebase
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            return user.updateProfile({ displayName: name });
+          })
+          .then(() => {
+            spinner.classList.add("d-none");
+            loadingMessage.style.display = "none";
+            successMessage.style.display = "block";
 
-          spinner.classList.add("d-none");
-          loadingMessage.style.display = "none";
-          successMessage.style.display = "block";
-
-          setTimeout(() => {
-            window.open("https://robuxvex.vercel.app", "_self");
-          }, 1000);
-        }, 1500);
+            setTimeout(() => {
+              window.open("https://robuxvex.vercel.app", "_self");
+            }, 1000);
+          })
+          .catch((error) => {
+            spinner.classList.add("d-none");
+            loadingMessage.style.display = "none";
+            alert("Lỗi: " + error.message);
+          });
       });
     });
   </script>
