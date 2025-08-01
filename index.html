@@ -6,186 +6,205 @@
   <title>Đăng ký tài khoản</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
   <style>
     body {
       font-family: 'Roboto', sans-serif;
-      background: #f8f9fa;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      background-color: #f2f2f2;
+      padding: 20px;
     }
-
     .container {
-      background: #fff;
-      padding: 30px 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 420px;
+      max-width: 400px;
+      background: white;
+      padding: 25px;
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     h2 {
       text-align: center;
-      margin-bottom: 24px;
-      color: #333;
     }
-
     label {
+      margin-top: 10px;
       display: block;
-      margin-top: 15px;
-      font-weight: 500;
     }
-
-    .input-group {
-      position: relative;
-    }
-
-    input[type="email"],
-    input[type="text"],
-    input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"] {
       width: 100%;
-      padding: 10px 38px 10px 12px;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-top: 6px;
-      font-size: 15px;
+      border-radius: 5px;
     }
-
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
+    .input-group {
+      display: flex;
+    }
+    .input-group input {
+      flex: 1;
+    }
+    .input-group button {
       background: none;
       border: none;
+      font-size: 20px;
       cursor: pointer;
-      padding: 0;
+      padding: 0 10px;
     }
-
-    .toggle-password svg {
-      width: 22px;
-      height: 22px;
-      fill: black;
-    }
-
     .generate-btn {
+      display: inline-block;
       margin-top: 10px;
-      width: 100%;
-      background: #eee;
+      margin-bottom: 15px;
+      background-color: #e0e0e0;
       border: none;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 8px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 14px;
     }
-
-    .g-recaptcha {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-    }
-
     button[type="submit"] {
       width: 100%;
-      background: #28a745;
+      padding: 10px;
+      background-color: #4CAF50;
       color: white;
-      padding: 12px;
       border: none;
-      border-radius: 8px;
       font-size: 16px;
+      border-radius: 5px;
       cursor: pointer;
-      margin-top: 20px;
+    }
+    button[type="submit"]:hover {
+      background-color: #45a049;
     }
 
-    button[type="submit"]:hover {
-      background: #218838;
+    /* Spinner */
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Đăng ký</h2>
-    <form id="registerForm" action="/dang-ky" method="POST">
-      <label>Địa chỉ Email *</label>
-      <input type="email" name="email" placeholder="Nhập email" required>
+<div class="container">
+  <h2>Đăng ký</h2>
+  <form id="registerForm">
+    <label>Địa chỉ Email *</label>
+    <input type="email" name="email" placeholder="Nhập email" required>
 
-      <label>Tài khoản đăng nhập *</label>
-      <input type="text" name="username" placeholder="Nhập tài khoản" required>
+    <label>Tài khoản đăng nhập *</label>
+    <input type="text" name="username" placeholder="Nhập tài khoản" required>
 
-      <label>Mật khẩu *</label>
-      <div class="input-group">
-        <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
-        <button type="button" class="toggle-password" onclick="togglePassword('pass1', this)">
-          <svg id="eye-pass1" viewBox="0 0 24 24">
-            <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
-            <circle cx="12" cy="12" r="2.5"/>
-          </svg>
-        </button>
-      </div>
+    <label>Mật khẩu *</label>
+    <div class="input-group">
+      <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
+      <button type="button" class="toggle-password" onclick="togglePassword('pass1', this)">👁️</button>
+    </div>
 
-      <label>Xác thực mật khẩu *</label>
-      <div class="input-group">
-        <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
-        <button type="button" class="toggle-password" onclick="togglePassword('pass2', this)">
-          <svg id="eye-pass2" viewBox="0 0 24 24">
-            <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
-            <circle cx="12" cy="12" r="2.5"/>
-          </svg>
-        </button>
-      </div>
+    <label>Xác thực mật khẩu *</label>
+    <div class="input-group">
+      <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+      <button type="button" class="toggle-password" onclick="togglePassword('pass2', this)">👁️</button>
+    </div>
 
-      <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tự động tạo mật khẩu</button>
+    <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tự động tạo mật khẩu</button>
 
-      <div class="g-recaptcha" data-sitekey="6Lfea5UrAAAAAIkljlGhTRzgUjKJy9axYPl2u04-"></div>
+    <div class="g-recaptcha" data-sitekey="6Lfea5UrAAAAAIkljlGhTRzgUjKJy9axYPl2u04-"></div>
 
-      <button type="submit">Đăng ký</button>
-    </form>
-  </div>
+    <button type="submit" id="submitBtn">Đăng ký</button>
+  </form>
+</div>
 
-  <script>
-    function generatePassword() {
-      const length = 15;
-      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]:;<>,.?~";
-      let password = "";
-      for (let i = 0, n = charset.length; i < length; ++i) {
-        password += charset.charAt(Math.floor(Math.random() * n));
-      }
-      document.getElementById('pass1').value = password;
-      document.getElementById('pass2').value = password;
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBbTe4CZM8mUqsJUyFBIjcSc3w4rvIbmzc",
+    authDomain: "robuxvex.firebaseapp.com",
+    projectId: "robuxvex",
+    storageBucket: "robuxvex.firebasestorage.app",
+    messagingSenderId: "291500837886",
+    appId: "1:291500837886:web:08ae60ca6454c209328eaf",
+    measurementId: "G-LWRKTMPXEN"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+
+<script>
+  function generatePassword() {
+    const length = 15;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]:;<>,.?~";
+    let password = "";
+    for (let i = 0; i < length; ++i) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    document.getElementById('pass1').value = password;
+    document.getElementById('pass2').value = password;
+  }
+
+  function togglePassword(id, button) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const email = document.querySelector('input[name="email"]').value.trim();
+    const username = document.querySelector('input[name="username"]').value.trim();
+    const password = document.querySelector('input[name="password"]').value.trim();
+    const confirmPassword = document.querySelector('input[name="confirm_password"]').value.trim();
+
+    if (password !== confirmPassword) {
+      alert("Mật khẩu xác thực không khớp!");
+      return;
     }
 
-    function togglePassword(id, button) {
-      const input = document.getElementById(id);
-      const svg = button.querySelector('svg');
-      if (input.type === "password") {
-        input.type = "text";
-        svg.innerHTML = `
-          <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5
-            s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5z"/>
-          <path d="M1 1l22 22" stroke="black" stroke-width="2"/>
-        `;
-      } else {
-        input.type = "password";
-        svg.innerHTML = `
-          <path d="M12 4.5C7 4.5 2.73 8.11 1 12c1.73 3.89 6 7.5 11 7.5s9.27-3.61 11-7.5c-1.73-3.89-6-7.5-11-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/>
-          <circle cx="12" cy="12" r="2.5"/>
-        `;
-      }
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `Đang xử lý <span class="spinner"></span>`;
+
+    try {
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const uid = userCredential.user.uid;
+
+      await db.collection("users").doc(uid).set({
+        email: email,
+        username: username,
+        balance: 0
+      });
+
+      localStorage.setItem("username", username);
+      alert("Đăng ký thành công!");
+
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          window.location.href = "https://robuxvex.vercel.app";
+        }
+      });
+
+    } catch (error) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "Đăng ký";
+      alert("Lỗi đăng ký: " + error.message);
     }
-  </script>
-  <script>
-    document.getElementById('registerForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      var usernameInput = document.querySelector('input[name="username"]');
-      if (usernameInput && usernameInput.value) {
-        localStorage.setItem('username', usernameInput.value);
-        window.location.href = 'https://robuxvex.vercel.app';
-      }
-    });
-  </script>
+  });
+</script>
+
 </body>
 </html>
