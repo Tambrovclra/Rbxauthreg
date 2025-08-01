@@ -6,8 +6,6 @@
   <title>Đăng ký tài khoản</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -64,6 +62,13 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    .status {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
   </style>
 </head>
 <body>
@@ -72,21 +77,21 @@
   <h2>Đăng ký</h2>
   <form id="registerForm">
     <label>Địa chỉ Email *</label>
-    <input type="email" name="email" placeholder="Nhập email" required>
+    <input type="email" name="email" required>
 
     <label>Tài khoản đăng nhập *</label>
-    <input type="text" name="username" placeholder="Nhập tài khoản" required>
+    <input type="text" name="username" required>
 
     <label>Mật khẩu *</label>
     <div class="input-group">
-      <input type="password" id="pass1" name="password" placeholder="Nhập mật khẩu" required>
-      <button type="button" class="toggle-password" onclick="togglePassword('pass1', this)">👁️</button>
+      <input type="password" id="pass1" name="password" required>
+      <button type="button" onclick="togglePassword('pass1')">👁️</button>
     </div>
 
     <label>Xác thực mật khẩu *</label>
     <div class="input-group">
-      <input type="password" id="pass2" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
-      <button type="button" class="toggle-password" onclick="togglePassword('pass2', this)">👁️</button>
+      <input type="password" id="pass2" name="confirm_password" required>
+      <button type="button" onclick="togglePassword('pass2')">👁️</button>
     </div>
 
     <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tạo mật khẩu</button>
@@ -94,10 +99,10 @@
     <div class="g-recaptcha" data-sitekey="6Lfea5UrAAAAAIkljlGhTRzgUjKJy9axYPl2u04-"></div>
 
     <button type="submit" id="submitBtn">Đăng ký</button>
+    <div class="status" id="statusMessage"></div>
   </form>
 </div>
 
-<!-- Firebase -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBbTe4CZM8mUqsJUyFBIjcSc3w4rvIbmzc",
@@ -111,40 +116,40 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-</script>
-
-<script>
-  function generatePassword() {
-    const length = 15;
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]:;<>,.?~";
-    let password = "";
-    for (let i = 0; i < length; ++i) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
-    document.getElementById('pass1').value = password;
-    document.getElementById('pass2').value = password;
-  }
 
   function togglePassword(id) {
     const input = document.getElementById(id);
     input.type = input.type === "password" ? "text" : "password";
   }
 
+  function generatePassword() {
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}[]:;<>,.?~";
+    let password = "";
+    for (let i = 0; i < 15; ++i) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    document.getElementById('pass1').value = password;
+    document.getElementById('pass2').value = password;
+  }
+
   document.getElementById('registerForm').addEventListener('submit', async function (event) {
     event.preventDefault();
+
     const email = document.querySelector('input[name="email"]').value.trim();
     const username = document.querySelector('input[name="username"]').value.trim();
     const password = document.querySelector('input[name="password"]').value.trim();
     const confirmPassword = document.querySelector('input[name="confirm_password"]').value.trim();
     const submitBtn = document.getElementById("submitBtn");
+    const statusMsg = document.getElementById("statusMessage");
 
     if (password !== confirmPassword) {
-      alert("Mật khẩu xác thực không khớp!");
+      statusMsg.innerText = "❌ Mật khẩu xác thực không khớp!";
       return;
     }
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = `Đang xử lý <span class="spinner"></span>`;
+    statusMsg.innerText = "";
 
     try {
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
@@ -157,16 +162,17 @@
       });
 
       localStorage.setItem("username", username);
-      alert("Đăng ký thành công!");
+      statusMsg.innerText = "✅ Đăng ký thành công! Đang chuyển hướng...";
+      console.log("Chuyển hướng tới https://robuxvex.vercel.app");
 
-      // ✅ CHUYỂN TRANG RÕ RÀNG
-      console.log("Chuyển đến trang chính...");
-      window.location.assign("https://robuxvex.vercel.app");
+      setTimeout(() => {
+        window.location.replace("https://robuxvex.vercel.app");
+      }, 1500);
 
     } catch (error) {
       submitBtn.disabled = false;
       submitBtn.innerHTML = "Đăng ký";
-      alert("Lỗi đăng ký: " + error.message);
+      statusMsg.innerText = "❌ Lỗi đăng ký: " + error.message;
       console.error("Lỗi Firebase:", error);
     }
   });
