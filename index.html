@@ -49,20 +49,6 @@
     }
     button[type="submit"]:hover { background-color: #45a049; }
 
-    .spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid white;
-      border-radius: 50%;
-      width: 16px; height: 16px;
-      animation: spin 1s linear infinite;
-      display: inline-block; vertical-align: middle;
-      margin-left: 8px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
     .status {
       text-align: center;
       margin-top: 20px;
@@ -147,10 +133,6 @@
       return;
     }
 
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `Đang xử lý <span class="spinner"></span>`;
-    statusMsg.innerText = "";
-
     try {
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
       const uid = userCredential.user.uid;
@@ -163,17 +145,13 @@
 
       localStorage.setItem("username", username);
       statusMsg.innerText = "✅ Đăng ký thành công! Đang chuyển hướng...";
-      console.log("Chuyển hướng tới https://robuxvex.vercel.app");
-
       setTimeout(() => {
         window.location.replace("https://robuxvex.vercel.app");
       }, 1500);
 
     } catch (error) {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = "Đăng ký";
       statusMsg.innerText = "❌ Lỗi đăng ký: " + error.message;
-      console.error("Lỗi Firebase:", error);
     }
   });
 </script>
