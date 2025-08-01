@@ -180,22 +180,26 @@
     submitBtn.innerHTML = `Đang xử lý <span class="spinner"></span>`;
 
     try {
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      const uid = userCredential.user.uid;
+  const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+  const uid = userCredential.user.uid;
 
-      await db.collection("users").doc(uid).set({
-        email: email,
-        username: username,
-        balance: 0
-      });
+  await db.collection("users").doc(uid).set({
+    email: email,
+    username: username,
+    balance: 0
+  });
 
-      localStorage.setItem("username", username);
-      alert("Đăng ký thành công!");
+  localStorage.setItem("username", username);
+  alert("Đăng ký thành công!");
 
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          window.location.href = "https://robuxvex.vercel.app";
-        }
+  window.location.href = "https://robuxvex.vercel.app";
+
+}
+    catch (error) {
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = "Đăng ký";
+  alert("Lỗi đăng ký: " + error.message);
+}
       });
 
     } catch (error) {
