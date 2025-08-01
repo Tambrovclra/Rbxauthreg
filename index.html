@@ -26,71 +26,40 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      text-align: center;
-    }
-    label {
-      margin-top: 10px;
-      display: block;
-    }
+    h2 { text-align: center; }
+    label { margin-top: 10px; display: block; }
     input[type="text"], input[type="email"], input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px;
+      border: 1px solid #ccc; border-radius: 5px;
     }
-    .input-group {
-      display: flex;
-    }
-    .input-group input {
-      flex: 1;
-    }
+    .input-group { display: flex; }
+    .input-group input { flex: 1; }
     .input-group button {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 0 10px;
+      background: none; border: none; font-size: 20px;
+      cursor: pointer; padding: 0 10px;
     }
     .generate-btn {
-      display: inline-block;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      background-color: #e0e0e0;
-      border: none;
-      padding: 8px;
-      border-radius: 5px;
-      cursor: pointer;
+      display: inline-block; margin-top: 10px; margin-bottom: 15px;
+      background-color: #e0e0e0; border: none; padding: 8px;
+      border-radius: 5px; cursor: pointer;
     }
     button[type="submit"] {
-      width: 100%;
-      padding: 10px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
+      width: 100%; padding: 10px;
+      background-color: #4CAF50; color: white;
+      border: none; font-size: 16px;
+      border-radius: 5px; cursor: pointer;
     }
-    button[type="submit"]:hover {
-      background-color: #45a049;
-    }
+    button[type="submit"]:hover { background-color: #45a049; }
 
-    /* Spinner */
     .spinner {
       border: 3px solid #f3f3f3;
       border-top: 3px solid white;
       border-radius: 50%;
-      width: 16px;
-      height: 16px;
+      width: 16px; height: 16px;
       animation: spin 1s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
+      display: inline-block; vertical-align: middle;
       margin-left: 8px;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -101,7 +70,7 @@
 
 <div class="container">
   <h2>Đăng ký</h2>
-  <form id="registerForm" action="javascript:void(0);">
+  <form id="registerForm">
     <label>Địa chỉ Email *</label>
     <input type="email" name="email" placeholder="Nhập email" required>
 
@@ -120,7 +89,7 @@
       <button type="button" class="toggle-password" onclick="togglePassword('pass2', this)">👁️</button>
     </div>
 
-    <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tự động tạo mật khẩu</button>
+    <button class="generate-btn" type="button" onclick="generatePassword()">🔄 Tạo mật khẩu</button>
 
     <div class="g-recaptcha" data-sitekey="6Lfea5UrAAAAAIkljlGhTRzgUjKJy9axYPl2u04-"></div>
 
@@ -128,7 +97,7 @@
   </form>
 </div>
 
-<!-- Firebase config -->
+<!-- Firebase -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBbTe4CZM8mUqsJUyFBIjcSc3w4rvIbmzc",
@@ -139,7 +108,6 @@
     appId: "1:291500837886:web:08ae60ca6454c209328eaf",
     measurementId: "G-LWRKTMPXEN"
   };
-
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
@@ -157,14 +125,13 @@
     document.getElementById('pass2').value = password;
   }
 
-  function togglePassword(id, button) {
+  function togglePassword(id) {
     const input = document.getElementById(id);
     input.type = input.type === "password" ? "text" : "password";
   }
 
   document.getElementById('registerForm').addEventListener('submit', async function (event) {
     event.preventDefault();
-
     const email = document.querySelector('input[name="email"]').value.trim();
     const username = document.querySelector('input[name="username"]').value.trim();
     const password = document.querySelector('input[name="password"]').value.trim();
@@ -192,12 +159,15 @@
       localStorage.setItem("username", username);
       alert("Đăng ký thành công!");
 
-      window.location.href = "https://robuxvex.vercel.app";
+      // ✅ CHUYỂN TRANG RÕ RÀNG
+      console.log("Chuyển đến trang chính...");
+      window.location.assign("https://robuxvex.vercel.app");
 
     } catch (error) {
       submitBtn.disabled = false;
       submitBtn.innerHTML = "Đăng ký";
       alert("Lỗi đăng ký: " + error.message);
+      console.error("Lỗi Firebase:", error);
     }
   });
 </script>
